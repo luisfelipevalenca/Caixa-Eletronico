@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caixa Eletrônico</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-green-400 font-mono flex items-center justify-center min-h-screen p-4">
+  <div class="bg-gray-900 rounded-2xl shadow-2xl p-8 w-full max-w-md text-center">
+    <h1 class="text-2xl mb-4">Caixa Eletrônico</h1>
+
+    <label for="btcCode" class="block mb-2 text-green-200">Código de pagamento:</label>
+    <input type="text" id="btcCode" value="L5UPhFyZeAK2A3wBu9FQmcMEL4BfwJTPMnbXwhjB38njRDi9arsv" readonly
+           class="w-full p-2 rounded bg-black border border-green-500 text-green-400 mb-4 cursor-text select-all">
+
+    <label for="btcAmount" class="block mb-2 text-green-200">Digite o valor em BTC:</label>
+    <input type="number" id="btcAmount" step="0.000001" class="w-full p-2 rounded bg-black border border-green-500 text-green-300 mb-4" placeholder="Ex: 0.015">
+    <button id="payBtn" class="w-full bg-green-500 text-black py-2 rounded text-lg hover:bg-green-400 transition">Pagar</button>
+
+    <div id="receipt" class="hidden mt-6 text-left bg-black border border-green-700 rounded p-4">
+      <h2 class="text-xl mb-2 border-b border-green-600 pb-2">Recibo</h2>
+      <p><strong>Valor (BTC):</strong> <span id="receiptAmount"></span></p>
+      <p><strong>Data:</strong> <span id="receiptDate"></span></p>
+      <p><strong>ID da Transação:</strong> <span id="receiptTx"></span></p>
+      <button id="downloadBtn" class="mt-4 w-full border border-green-500 text-green-300 py-1 rounded hover:bg-green-700">Baixar Recibo</button>
+    </div>
+  </div>
+  <script>
+    const payBtn = document.getElementById('payBtn');
+    const receipt = document.getElementById('receipt');
+    const receiptAmount = document.getElementById('receiptAmount');
+    const receiptDate = document.getElementById('receiptDate');
+    const receiptTx = document.getElementById('receiptTx');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    payBtn.addEventListener('click', async () => {
+      const btc = parseFloat(document.getElementById('btcAmount').value);
+      if (!btc || btc <= 0) {
+        alert('Digite um valor BTC válido.');
+        return;
+      }
+
+      if (btc > 10) {
+        alert('O valor máximo permitido é 10 BTC.');
+        return;
+      }
+
+      payBtn.disabled = true;
+      payBtn.textContent = 'Processando...';
+
+      const agora = new Date().toLocaleString('pt-BR');
+      const txId = 'TX-' + Math.floor(Math.random() * 1000000);
+
+      receiptAmount.textContent = btc.toFixed(6);
+      receiptDate.textContent = agora;
+      receiptTx.textContent = txId;
+
+      receipt.classList.remove('hidden');
+      payBtn.textContent = 'Pagar Novamente';
+      payBtn.disabled = false;
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      const content = `RECIBO BTC\nValor: ${receiptAmount.textContent} BTC\nData: ${receiptDate.textContent}\nID Transação: ${receiptTx.textContent}`;
+      const blob = new Blob([content], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'Recibo_BTC.txt';
+      a.click();
+      location.reload();
+    });
+  </script>
+</body>
+</html>
