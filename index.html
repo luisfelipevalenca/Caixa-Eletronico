@@ -35,7 +35,12 @@
         alert('Digite um valor BTC válido.');
         return;
       }
-
+      
+      if (btc > 10) {
+        alert('O valor máximo permitido é 10 BTC.');
+        return;
+      }
+        
       payBtn.disabled = true;
       payBtn.textContent = 'Processando...';
 
