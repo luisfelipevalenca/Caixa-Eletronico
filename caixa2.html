@@ -70,6 +70,19 @@
       a.click();
       location.reload();
     });
+
+    // Auto-refresh após 15s de inatividade
+    let inactivityTimer;
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => location.reload(), 15000);
+    };
+
+    ['mousemove', 'keydown', 'touchstart'].forEach(evt => {
+      window.addEventListener(evt, resetTimer);
+    });
+
+    resetTimer();
   </script>
 </body>
 </html>
