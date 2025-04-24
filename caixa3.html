@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Caixa Eletrônico</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -15,6 +15,7 @@
 
     <label for="btcAmount" class="block mb-2 text-green-200">Digite o valor em BTC:</label>
     <input type="number" id="btcAmount" step="0.000001" class="w-full p-2 rounded bg-black border border-green-500 text-green-300 mb-4" placeholder="Ex: 10.000000">
+
     <button id="payBtn" class="w-full bg-green-500 text-black py-2 rounded text-lg hover:bg-green-400 transition">Pagar</button>
 
     <div id="receipt" class="hidden mt-6 text-left bg-black border border-green-700 rounded p-4">
@@ -25,6 +26,7 @@
       <button id="downloadBtn" class="mt-4 w-full border border-green-500 text-green-300 py-1 rounded hover:bg-green-700">Baixar Recibo</button>
     </div>
   </div>
+
   <script>
     const payBtn = document.getElementById('payBtn');
     const receipt = document.getElementById('receipt');
@@ -33,6 +35,8 @@
     const receiptTx = document.getElementById('receiptTx');
     const downloadBtn = document.getElementById('downloadBtn');
 
+    const BACKEND_URL = "https://49b6-34-106-233-143.ngrok-free.app";
+    
     payBtn.addEventListener('click', async () => {
       const btc = parseFloat(document.getElementById('btcAmount').value);
       if (!btc || btc <= 0) return alert('Digite um valor BTC válido.');
@@ -45,16 +49,14 @@
       receiptAmount.textContent = btc.toFixed(6);
       receiptDate.textContent = agora;
       receiptTx.textContent = txId;
-
-      // exibe recibo
       receipt.classList.remove('hidden');
 
-      // envia para backend carranca
-      const res = await fetch('/api/pagamento', {
+      const res = await fetch(`${BACKEND_URL}/api/pagamento`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ valor: btc, carteira: carteira, tx_id: txId })
       });
+
       const json = await res.json();
       alert(json.resposta || 'Erro ao validar pagamento');
     });
