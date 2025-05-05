@@ -56,9 +56,32 @@
       receiptDate.textContent = agora;
       receiptTx.textContent = txId;
 
+      const reciboTexto = `RECIBO BTC\nValor: ${btc.toFixed(6)} BTC\nData: ${agora}\nID Transação: ${txId}`;
+
+      try {
+        await navigator.clipboard.writeText(reciboTexto);
+        alert('✅ Recibo copiado para a área de transferência.\nCole no chat para confirmar o pagamento.');
+      } catch (err) {
+        alert('Erro ao copiar. Copie manualmente.');
+      }
+
       receipt.classList.remove('hidden');
       payBtn.textContent = 'Pagar Novamente';
       payBtn.disabled = false;
+
+      // Envia para backend Flask
+      fetch("/proxy-post", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          btc: receiptAmount.textContent,
+          data: receiptDate.textContent,
+          txId: receiptTx.textContent
+        })
+      })
+      .then(res => res.json())
+      .then(data => console.log("Enviado ao backend:", data))
+      .catch(err => console.error("Erro ao enviar proxy:", err));
     });
 
     downloadBtn.addEventListener('click', () => {
