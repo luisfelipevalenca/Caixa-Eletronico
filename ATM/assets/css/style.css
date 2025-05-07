@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+body {
+  background: #050000;
+  font-family: 'Courier New', monospace;
+  color: #ff1a1a;
+}
+.glass {
+  background: #0a0000cc;
+  border: 1px solid #ff1a1a;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 20px #ff1a1a66, 0 0 30px #600000;
+}
+.terminal-box {
+  background: #000;
+  border: 1px solid #ff1a1a;
+  padding: 1rem;
+  font-size: 0.875rem;
+  font-family: monospace;
+  box-shadow: inset 0 0 18px #ff1a1a44;
+  height: 600px;
+  overflow-y: auto;
+  scrollbar-color: #ff1a1a #000;
+  scrollbar-width: thin;
+}
+.terminal-box::-webkit-scrollbar {
+  width: 8px;
+}
+.terminal-box::-webkit-scrollbar-thumb {
+  background: #ff1a1a;
+  border-radius: 4px;
+}
+.terminal-box::-webkit-scrollbar-track {
+  background: #000;
+}
+.neon-input {
+  background-color: #000;
+  border: 1px solid #ff1a1a;
+  color: #ff1a1a;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  width: 100%;
+}
+.pay-button {
+  background: linear-gradient(to right, #ff0033, #ff1a1a);
+  border: none;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  color: #fff;
+  padding: 0.6rem 1rem;
+  width: 100%;
+  border-radius: 0.375rem;
+  box-shadow: 0 0 12px #ff1a1a99;
+  transition: all 0.2s ease-in-out;
+}
+.pay-button:hover {
+  background: #ff3333;
+  transform: scale(1.02);
+  box-shadow: 0 0 20px #ff1a1a;
+}
+.prompt::before {
+  content: 'root@btc-node:~$ ';
+  color: #ff1a1a;
+}
