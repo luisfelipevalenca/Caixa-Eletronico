@@ -162,11 +162,11 @@
         if (sucesso) {
           alert(`Pagamento processado! Detalhes do recibo copiados:\n\n${texto}`);
         } else {
-          throw new Error("execCommand falhou");
+          throw new Error("Copie os dados do recibo insira na conversa.");
         }
       } catch (err) {
         console.error('Erro ao copiar:', err);
-        prompt("Erro ao copiar. Copie manualmente:", texto);
+        prompt("Copie os dados e insira na conversa:", texto);
       }
       document.body.removeChild(textarea);
     }
