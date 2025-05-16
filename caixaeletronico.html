@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caixa Eletrônico</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      background-color: #000000;
+      color: #00ff00;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .atm-container {
+      width: 100%;
+      max-width: 600px;
+      background-color: #000000;
+      border: 2px solid #00ff00;
+      border-radius: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #00ff00;
+      padding-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+      color: #00ff00;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      max-width: 500px;
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #00ff00;
+      border-radius: 0;
+      background-color: #000000;
+      color: #00ff00;
+      font-family: 'Courier New', monospace;
+      font-size: 1.1rem;
+      outline: none;
+      transition: border-color 0.3s;
+      margin: 0 auto 20px;
+      display: block;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      border-color: #00cc00;
+    }
+
+    input[type="text"]::placeholder,
+    input[type="number"]::placeholder {
+      color: #00aa00;
+    }
+
+    button {
+      max-width: 500px;
+      width: 100%;
+      padding: 12px 25px;
+      background-color: #000000;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      border-radius: 0;
+      cursor: pointer;
+      font-family: 'Courier New', monospace;
+      font-size: 1.1rem;
+      transition: background-color 0.3s, color 0.3s;
+      margin: 10px auto 0;
+      display: block;
+    }
+
+    button:hover {
+      background-color: #00ff00;
+      color: #000000;
+    }
+
+    .receipt {
+      max-width: 500px;
+      margin: 20px auto 0;
+      text-align: left;
+      background-color: #000000;
+      border: 1px solid #00ff00;
+      border-radius: 0;
+      padding: 15px;
+    }
+
+    .receipt h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #00ff00;
+      padding-bottom: 5px;
+    }
+
+    .receipt p {
+      margin: 5px 0;
+      font-size: 1rem;
+    }
+
+    .receipt strong {
+      color: #00ff00;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="atm-container">
+    <h1>Caixa Eletrônico</h1>
+
+    <label for="btcCode">Código de pagamento:</label>
+    <input type="text" id="btcCode" value="L5UPhFyZeAK2A3wBu9FQmcMEL4BfwJTPMnbXwhjB38njRDi9arsv" readonly>
+
+    <label for="btcAmount">Digite o valor em BTC:</label>
+    <input type="number" id="btcAmount" step="0.000001" placeholder="Ex: 0.015">
+
+    <button id="payBtn">Pagar</button>
+
+    <div id="receipt" class="receipt hidden">
+      <h2>Recibo</h2>
+      <p><strong>Valor (BTC):</strong> <span id="receiptAmount"></span></p>
+      <p><strong>Data:</strong> <span id="receiptDate"></span></p>
+      <p><strong>ID da Transação:</strong> <span id="receiptTx"></span></p>
+      <button id="downloadBtn">Baixar Recibo</button>
+    </div>
+  </div>
+
+  <script>
+    const payBtn = document.getElementById('payBtn');
+    const receipt = document.getElementById('receipt');
+    const receiptAmount = document.getElementById('receiptAmount');
+    const receiptDate = document.getElementById('receiptDate');
+    const receiptTx = document.getElementById('receiptTx');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    function copiarTextoCompatível(texto) {
+      const textarea = document.createElement('textarea');
+      textarea.value = texto;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'absolute';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        const sucesso = document.execCommand('copy');
+        if (sucesso) {
+          alert(`Pagamento processado! Detalhes do recibo copiados:\n\n${texto}`);
+        } else {
+          throw new Error("execCommand falhou");
+        }
+      } catch (err) {
+        console.error('Erro ao copiar:', err);
+        prompt("Erro ao copiar. Copie manualmente:", texto);
+      }
+      document.body.removeChild(textarea);
+    }
+
+    payBtn.addEventListener('click', () => {
+      const btc = parseFloat(document.getElementById('btcAmount').value);
+      if (!btc || btc <= 0) {
+        alert('Digite um valor BTC válido.');
+        return;
+      }
+      if (btc > 10) {
+        alert('O valor máximo permitido é 10 BTC.');
+        return;
+      }
+
+      payBtn.disabled = true;
+      payBtn.textContent = 'Processando...';
+
+      const agora = new Date().toLocaleString('pt-BR');
+      const txId = 'TX-' + Math.floor(Math.random() * 1000000);
+
+      receiptAmount.textContent = btc.toFixed(6);
+      receiptDate.textContent = agora;
+      receiptTx.textContent = txId;
+
+      const receiptText = `RECIBO BTC\nValor: ${receiptAmount.textContent} BTC\nData: ${receiptDate.textContent}\nID Transação: ${receiptTx.textContent}`;
+      copiarTextoCompatível(receiptText);
+
+      receipt.classList.remove('hidden');
+      payBtn.textContent = 'Pagar Novamente';
+      payBtn.disabled = false;
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      const content = `RECIBO BTC\nValor: ${receiptAmount.textContent} BTC\nData: ${receiptDate.textContent}\nID Transação: ${receiptTx.textContent}`;
+      const blob = new Blob([content], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'Recibo_BTC.txt';
+      a.click();
+      location.reload();
+    });
+
+    let inactivityTimer;
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => location.reload(), 15000);
+    };
+
+    ['mousemove', 'keydown', 'touchstart'].forEach(evt => {
+      window.addEventListener(evt, resetTimer);
+    });
+
+    resetTimer();
+  </script>
+</body>
+</html>
